@@ -1,5 +1,18 @@
 # @tanstack/solid-query
 
+## 6.0.0-rc.2
+
+### Patch Changes
+
+- [#11325](https://github.com/TanStack/query/pull/11325) [`209f9f5`](https://github.com/TanStack/query/commit/209f9f5153cab810337c6b8ad9e0cd90945c5c6f) - fix: scope useMutation's mutation-cache subscription to the flight. The
+  hook subscribed at mount with a bare reactive `client()` read (tripping
+  Solid's STRICT_READ_UNTRACKED dev diagnostic) and held the subscription
+  for its whole life even though the listener only matters while a mutation
+  is in flight. The subscription now starts in `run` against the same
+  client the mutation is built on and ends at settle: nothing reactive is
+  read at setup, the listener and the mutation can never sit on different
+  clients, and idle hooks hold no cache subscription.
+
 ## 6.0.0-rc.1
 
 ### Major Changes
