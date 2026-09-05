@@ -1,0 +1,25 @@
+# diff coverage may be off: abloh could not stage @vitest/coverage-v8 for any of
+# this repository's vitest workspace packages here. A run stages it again in the
+# job that measures.
+
+# abloh.yml - read from the PR merge base, so changes are reviewed like code.
+# Keys: https://abloh.dev/docs#config
+
+# % of mechanical breaks in changed lines your tests must catch.
+threshold: 70
+
+# true: below threshold fails the check. Blocks merges only if also marked
+# required in branch protection.
+enforce: true
+
+# Rebuild recipe for the proof container. Comments name the source file.
+environment:
+  runtimeImage: node:24.18.0-bookworm-slim@sha256:6f7b03f7c2c8e2e784dcf9295400527b9b1270fd37b7e9a7285cf83b6951452d # reviewed Node 24 image (.nvmrc)
+  installDirectory: .
+  setup: .abloh/setup.sh # written by init and yours to edit. Every cold run executes it step by step
+  testCommand: pnpm run test:lib # set by you. at the repository root this runs other commands rather than a test runner, so a run measuring the root reports 0 executed tests and refuses. Abloh measures the package a pull request changes, and there the same command runs vitest - all 25 packages Abloh can point at, such as packages/angular-query-experimental
+  # no sealedTestCommand - Abloh derived none. Your test command runs vitest in the packages a pull request changes and names no runner at the repository root, so there is no one command here to invoke.
+  identityFiles: # a change here triggers reinstall instead of container reuse
+    - .npmrc
+    - nx.json
+    - pnpm-workspace.yaml
